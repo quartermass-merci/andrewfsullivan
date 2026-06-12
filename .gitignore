@@ -4,6 +4,9 @@ site/node_modules/
 site/dist/
 dist/
 
+# TypeScript incremental build cache
+*.tsbuildinfo
+
 # local migration archive — huge source GIFs + scraped originals, not needed
 # in the repo (the web copies the site uses live in site/public/)
 Assets from the Current Website/
