@@ -1,0 +1,768 @@
+/* ================================================================
+   Book pages — each book is its own world.
+   The page reads its palette from CSS vars set by the Book route:
+   --bk-bg, --bk-ink, --bk-accent, --bk-accent2, --bk-muted
+   Title treatment switches per cover: stack / glow / scrawl / banner.
+   ================================================================ */
+
+.book {
+  min-height: 100vh;
+  background: var(--bk-bg);
+  color: var(--bk-ink);
+  position: relative;
+}
+
+/* Each world keeps the printed-object grain */
+.book::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--bk-ink) 4.5%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 5px 5px;
+  mix-blend-mode: overlay;
+}
+
+.book > * {
+  position: relative;
+  z-index: 2;
+}
+
+.book__inner {
+  max-width: 1380px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ----------------------------------------------------------------
+   Head
+   ---------------------------------------------------------------- */
+
+.book__head {
+  padding-top: clamp(5.5rem, 14vh, 9rem);
+  padding-bottom: clamp(2rem, 5vh, 3.5rem);
+}
+
+.book__back {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--bk-muted);
+  text-decoration: none;
+  margin-bottom: clamp(2rem, 5vh, 3.5rem);
+  transition: color 0.2s ease;
+}
+
+.book__back:hover,
+.book__back:focus-visible {
+  color: var(--bk-accent);
+}
+
+.book__back::before {
+  content: '←';
+  font-family: var(--font-body);
+}
+
+.book__title {
+  font-size: clamp(2.8rem, 9.5vw, 8rem);
+  color: var(--bk-ink);
+  white-space: pre-line;
+}
+
+.book__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.75rem;
+  margin-top: clamp(1.25rem, 3vh, 2rem);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--bk-muted);
+}
+
+.book__meta strong {
+  color: var(--bk-accent);
+  font-weight: 700;
+}
+
+/* --- Title treatments, per cover ------------------------------- */
+
+/* The Marigold: stacked tower of words, magenta off-print, gold root rule */
+.book--stack .book__title {
+  line-height: 0.88;
+  text-shadow:
+    0.04em 0.035em 0 color-mix(in srgb, var(--bk-accent) 75%, transparent);
+}
+
+.book--stack .book__title::after {
+  content: '';
+  display: block;
+  width: clamp(120px, 22vw, 320px);
+  height: 5px;
+  margin-top: clamp(1rem, 2.5vh, 1.75rem);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--bk-accent2) 0 14px,
+    transparent 14px 20px
+  );
+}
+
+/* The Handyman Method: fog letters lit from below by something red */
+.book--glow .book__title {
+  letter-spacing: 0.14em;
+  line-height: 1.04;
+  font-weight: 700;
+  color: var(--bk-accent2);
+  text-shadow:
+    0 0 18px color-mix(in srgb, var(--bk-accent) 55%, transparent),
+    0 14px 42px color-mix(in srgb, var(--bk-accent) 38%, transparent);
+}
+
+/* WASTE: scrawled — each letter set slightly off-true */
+.book--scrawl .book__title {
+  font-size: clamp(4rem, 17vw, 15rem);
+  letter-spacing: 0.04em;
+}
+
+.book--scrawl .book__title .ch {
+  display: inline-block;
+}
+
+.book--scrawl .book__title .ch:nth-child(odd) {
+  transform: rotate(-2.4deg) translateY(0.02em);
+}
+
+.book--scrawl .book__title .ch:nth-child(even) {
+  transform: rotate(1.8deg) translateY(-0.025em);
+}
+
+.book--scrawl .book__title .ch:nth-child(3) {
+  transform: rotate(-1.2deg) translateY(0.045em) scale(1.04);
+}
+
+/* All We Want is Everything: the red hex banner from the jacket */
+.book--banner .book__title {
+  font-size: clamp(1.9rem, 5.2vw, 4.4rem);
+  background: var(--bk-accent);
+  color: var(--bk-bg);
+  display: inline-block;
+  padding: 0.5em 1.4em;
+  clip-path: polygon(
+    1.2em 0%,
+    calc(100% - 1.2em) 0%,
+    100% 50%,
+    calc(100% - 1.2em) 100%,
+    1.2em 100%,
+    0% 50%
+  );
+  line-height: 1.05;
+}
+
+/* ----------------------------------------------------------------
+   Body: framed cover + synopsis + ordering
+   ---------------------------------------------------------------- */
+
+.book__body {
+  display: grid;
+  gap: clamp(2rem, 4.5vw, 4.5rem);
+  padding-bottom: clamp(3rem, 7vh, 5.5rem);
+}
+
+@media (min-width: 900px) {
+  .book__body {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: start;
+  }
+}
+
+.book__cover {
+  max-width: 460px;
+}
+
+/* Sticky cover is a desktop behaviour only — on mobile the layout is a
+   single column and a stuck cover traps the synopsis underneath it. */
+@media (min-width: 900px) {
+  .book__cover {
+    position: sticky;
+    top: 90px;
+  }
+}
+
+.book__cover .framed {
+  box-shadow: 9px 9px 0 var(--bk-accent);
+}
+
+.book__synopsis {
+  display: grid;
+  gap: 1.1rem;
+  font-size: clamp(1.08rem, 1.5vw, 1.3rem);
+  line-height: 1.62;
+  max-width: 62ch;
+}
+
+.book__synopsis p:first-child {
+  font-size: clamp(1.25rem, 1.9vw, 1.6rem);
+  line-height: 1.45;
+  color: var(--bk-ink);
+}
+
+/* Drop cap — the opening letter set as a printed initial in the wordmark
+   Didone, sunk three lines and inflected per world. Float + big size is the
+   universal fallback; initial-letter does the clean sink where supported. */
+.book__synopsis p:first-child::first-letter {
+  font-family: var(--font-wordmark);
+  font-weight: 700;
+  color: var(--bk-accent);
+  float: left;
+  font-size: 3.7em;
+  line-height: 0.62;
+  padding: 0.02em 0.12em 0 0;
+  text-transform: uppercase;
+}
+
+@supports (initial-letter: 3) or (-webkit-initial-letter: 3) {
+  .book__synopsis p:first-child::first-letter {
+    -webkit-initial-letter: 3;
+    initial-letter: 3;
+    font-size: 1em;
+    line-height: 1;
+    padding: 0 0.12em 0 0;
+  }
+}
+
+/* Per-world flourish on the initial */
+.book--stack .book__synopsis p:first-child::first-letter {
+  text-shadow: 0.04em 0.035em 0 color-mix(in srgb, var(--bk-accent2) 85%, transparent);
+}
+
+.book--glow .book__synopsis p:first-child::first-letter {
+  color: var(--bk-accent2);
+  text-shadow: 0 0 0.2em color-mix(in srgb, var(--bk-accent) 65%, transparent);
+}
+
+.book--scrawl .book__synopsis p:first-child::first-letter {
+  color: var(--bk-accent2);
+}
+
+.book--banner .book__synopsis p:first-child::first-letter {
+  color: var(--bk-bg);
+  background: var(--bk-accent);
+  padding: 0.04em 0.12em 0;
+}
+
+.book__synopsis em {
+  color: var(--bk-accent);
+}
+
+/* Honours — set as a running back-cover credit line, not chips */
+.book__honors {
+  margin-top: clamp(1.75rem, 4vh, 2.5rem);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.74rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  line-height: 2;
+  color: var(--bk-accent);
+  max-width: 58ch;
+}
+
+.book--scrawl .book__honors {
+  color: var(--bk-accent2);
+}
+
+/* Ordering — editorial link runs, the way the live site lists retailers */
+.book__order {
+  margin-top: clamp(2rem, 5vh, 3rem);
+  display: grid;
+  gap: 1.1rem;
+  border-top: 1px solid color-mix(in srgb, var(--bk-ink) 18%, transparent);
+  padding-top: clamp(1.25rem, 3vh, 1.75rem);
+  max-width: 62ch;
+}
+
+.book__order-line {
+  font-size: 1.02rem;
+  line-height: 1.9;
+}
+
+.book__order-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bk-muted);
+  margin-right: 0.9rem;
+}
+
+.book__order-line a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: color-mix(in srgb, var(--bk-ink) 45%, transparent);
+  white-space: nowrap;
+}
+
+.book__order-line a:hover,
+.book__order-line a:focus-visible {
+  color: var(--bk-accent);
+  text-decoration-color: var(--bk-accent);
+}
+
+.book--scrawl .book__order-line a:hover,
+.book--scrawl .book__order-line a:focus-visible {
+  color: var(--bk-accent2);
+  text-decoration-color: var(--bk-accent2);
+}
+
+.book__order-sep {
+  color: var(--bk-muted);
+}
+
+/* ----------------------------------------------------------------
+   The band — a full-bleed slice of the actual jacket, run across the
+   page like a strip of the cover taped to the wall.
+   ---------------------------------------------------------------- */
+
+/* The band is a thin seam of movement beneath the page: the (low-res) loop is
+   blurred, desaturated and screen-blended at low opacity, its edges masked
+   into the surrounding ink so it reads as "something alive underneath" rather
+   than a video. PK: narrow it, filter it, keep the motion subtle. */
+.book__band {
+  height: clamp(96px, 16vh, 150px);
+  background: var(--bk-bg);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 32%,
+    #000 68%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 32%,
+    #000 68%,
+    transparent
+  );
+}
+
+.book__band img,
+.book__band video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.5;
+  filter: blur(2px) saturate(0.75) contrast(1.05);
+  mix-blend-mode: screen;
+}
+
+/* The static fallback drifts slowly; the video carries its own half-speed loop */
+@media (prefers-reduced-motion: no-preference) {
+  .book__band img {
+    animation: band-breathe 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes band-breathe {
+    from { transform: scale(1.02); }
+    to { transform: scale(1.09); }
+  }
+}
+
+/* ----------------------------------------------------------------
+   Press — a wall of type, not a card grid
+   ---------------------------------------------------------------- */
+
+.book__press {
+  padding-block: clamp(3rem, 7vh, 5.5rem);
+}
+
+.book__press-head {
+  margin-bottom: clamp(2rem, 5vh, 3rem);
+}
+
+/* Section heads stay quiet and monochrome across every world — PK found the
+   coloured off-print / under-glow too colourful and polished for the vibe.
+   Colour lives in the cover bands, the drop caps and the title treatments. */
+
+.book__press-feature {
+  font-family: var(--font-body);
+  font-size: clamp(1.5rem, 3.2vw, 2.6rem);
+  line-height: 1.3;
+  max-width: 26ch;
+  margin-bottom: clamp(2.5rem, 6vh, 4rem);
+}
+
+.book__press-feature q {
+  quotes: '\201C' '\201D';
+}
+
+.book__press-feature em {
+  color: var(--bk-accent);
+}
+
+.book__press-feature cite {
+  display: block;
+  margin-top: 1rem;
+  font-style: normal;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.72rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--bk-accent);
+}
+
+/* AWWE: the featured attribution sits in the jacket's hex banner */
+.book--banner .book__press-feature cite {
+  display: inline-block;
+  background: var(--bk-accent);
+  color: var(--bk-bg);
+  padding: 0.5em 1.6em;
+  clip-path: polygon(
+    0.9em 0%,
+    calc(100% - 0.9em) 0%,
+    100% 50%,
+    calc(100% - 0.9em) 100%,
+    0.9em 100%,
+    0% 50%
+  );
+}
+
+.book--banner .book__press-feature cite em {
+  color: inherit;
+}
+
+/* Praise pages — the front-matter of a paperback, not a card grid.
+   No containers: an accent dash, the source in strong caps, the
+   quote beneath. Airy columns separated by hairline rules. */
+.book__press-wall {
+  columns: 1;
+  column-gap: clamp(2.5rem, 5vw, 4.5rem);
+  column-rule: 1px solid color-mix(in srgb, var(--bk-ink) 14%, transparent);
+}
+
+@media (min-width: 760px) {
+  .book__press-wall {
+    columns: 2;
+  }
+}
+
+@media (min-width: 1180px) {
+  .book__press-wall {
+    columns: 3;
+  }
+}
+
+.press-note {
+  break-inside: avoid;
+  margin-bottom: clamp(2rem, 4.5vh, 3rem);
+}
+
+.press-note__source {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1.5;
+  color: var(--bk-ink);
+  margin-bottom: 0.55rem;
+}
+
+.press-note__dash {
+  color: var(--bk-accent);
+  margin-right: 0.5em;
+}
+
+.book--scrawl .press-note__dash {
+  color: var(--bk-accent2);
+}
+
+.press-note__source em {
+  color: inherit;
+  font-style: italic;
+}
+
+.press-note__role {
+  color: var(--bk-muted);
+  letter-spacing: 0.1em;
+  text-transform: none;
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+}
+
+.press-note__role em {
+  color: inherit;
+  font-style: italic;
+}
+
+.press-note__quote {
+  font-size: 1.06rem;
+  line-height: 1.6;
+  max-width: 46ch;
+}
+
+/* A gentle print-run variance in size, like mixed clipping sources */
+.press-note:nth-child(4n + 2) .press-note__quote {
+  font-size: 1.16rem;
+  line-height: 1.52;
+}
+
+.press-note__quote em {
+  color: var(--bk-accent);
+}
+
+.book--scrawl .press-note__quote em {
+  color: var(--bk-accent2);
+}
+
+/* ----------------------------------------------------------------
+   Marigold artwork gallery + teaser
+   ---------------------------------------------------------------- */
+
+.book__art {
+  border-top: 1px solid color-mix(in srgb, var(--bk-ink) 18%, transparent);
+  padding-block: clamp(3rem, 7vh, 5.5rem);
+}
+
+.book__art-head {
+  margin-bottom: clamp(2rem, 5vh, 3rem);
+}
+
+.book__art-strip {
+  display: flex;
+  gap: clamp(1rem, 2.5vw, 2rem);
+  overflow-x: auto;
+  padding-bottom: 1.25rem;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--bk-accent) 60%, transparent)
+    transparent;
+}
+
+.book__art-strip figure {
+  flex: 0 0 clamp(240px, 30vw, 380px);
+  scroll-snap-align: start;
+}
+
+.book__art-strip figure:nth-child(odd) .framed {
+  transform: rotate(-1deg);
+}
+
+.book__art-strip figure:nth-child(even) .framed {
+  transform: rotate(0.8deg);
+}
+
+.book__art-strip .framed {
+  aspect-ratio: 4 / 5;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.book__art-strip figure:hover .framed {
+  transform: rotate(0deg) translateY(-6px);
+}
+
+.book__art-strip figcaption {
+  margin-top: 0.7rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.64rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bk-muted);
+}
+
+.book__art-strip figcaption strong {
+  color: var(--bk-accent);
+  display: block;
+  font-size: 0.72rem;
+}
+
+/* Thumbnails are buttons — click to zoom */
+.art-thumb {
+  display: block;
+  width: 100%;
+  cursor: zoom-in;
+}
+
+/* ----------------------------------------------------------------
+   Lightbox — the artwork at full size
+   ---------------------------------------------------------------- */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 3.5rem);
+  background: color-mix(in srgb, var(--bk-bg) 30%, rgba(5, 3, 2, 0.94));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lightbox {
+    animation: lightbox-in 0.16s ease-out;
+  }
+
+  @keyframes lightbox-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+.lightbox__figure {
+  max-width: min(1100px, 92vw);
+}
+
+.lightbox__figure .framed > img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 76vh;
+  object-fit: contain;
+  margin-inline: auto;
+}
+
+.lightbox__figure figcaption {
+  margin-top: 0.8rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bk-muted);
+}
+
+.lightbox__figure figcaption strong {
+  color: var(--bk-accent);
+  display: block;
+  font-size: 0.78rem;
+  margin-bottom: 0.25rem;
+}
+
+.lightbox__close {
+  position: fixed;
+  top: 1rem;
+  right: var(--gutter);
+  z-index: 2;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bk-ink);
+  padding: 0.6rem 0.2rem;
+}
+
+.lightbox__close:hover {
+  color: var(--bk-accent);
+}
+
+.lightbox__step {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  font-family: var(--font-body);
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  line-height: 1;
+  color: var(--bk-ink);
+  padding: 0.5rem 0.9rem;
+}
+
+.lightbox__step:hover {
+  color: var(--bk-accent);
+}
+
+.lightbox__step--prev { left: clamp(0.25rem, 1.5vw, 1.5rem); }
+.lightbox__step--next { right: clamp(0.25rem, 1.5vw, 1.5rem); }
+
+/* On scrawl (WASTE) the accent is near-white; keep hover legible */
+.book--scrawl .lightbox__close:hover,
+.book--scrawl .lightbox__step:hover {
+  color: var(--bk-accent2);
+}
+
+/* Teaser — a big beat between the band and the reviews. Sized to dominate
+   and lit with a hard accent shadow so it begs to be played. */
+.book__teaser-block {
+  padding-top: clamp(3rem, 7vh, 5rem);
+}
+
+.book__teaser {
+  max-width: min(100%, 1180px);
+  margin-inline: auto;
+}
+
+.book__teaser .framed {
+  padding: var(--frame-w);
+  box-shadow: 14px 14px 0 var(--bk-accent);
+}
+
+.book__teaser video {
+  display: block;
+  width: 100%;
+}
+
+.book__teaser-caption {
+  margin-top: 0.9rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bk-muted);
+}
+
+/* ----------------------------------------------------------------
+   Next-book handoff
+   ---------------------------------------------------------------- */
+
+.book__next {
+  border-top: 1px solid color-mix(in srgb, var(--bk-ink) 18%, transparent);
+  padding-block: clamp(2.5rem, 6vh, 4rem);
+}
+
+.book__next a {
+  text-decoration: none;
+  display: inline-grid;
+  gap: 0.5rem;
+}
+
+.book__next-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--bk-muted);
+}
+
+.book__next-title {
+  font-size: clamp(1.8rem, 5vw, 3.4rem);
+  color: var(--bk-ink);
+  transition: color 0.2s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.book__next a:hover .book__next-title,
+.book__next a:focus-visible .book__next-title {
+  color: var(--bk-accent);
+  transform: translateX(8px);
+}

@@ -1,0 +1,19 @@
+# dependencies & build output
+node_modules/
+site/node_modules/
+site/dist/
+dist/
+
+# local migration archive — huge source GIFs + scraped originals, not needed
+# in the repo (the web copies the site uses live in site/public/)
+Assets from the Current Website/
+
+# OS / editor cruft
+.DS_Store
+**/.DS_Store
+*.log
+
+# env
+.env
+site/.env
+site/.env.*

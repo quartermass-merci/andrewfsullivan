@@ -1,0 +1,564 @@
+/* ================================================================
+   Andrew F. Sullivan — global tokens & base
+   Source of truth: Moodboard/1.jpg — warm-black wall, white-framed
+   psychedelic paperback imagery, the name in heavy red caps, and a
+   five-colour ink set: red / yellow / blue / green / pink.
+   Language: flat screenprint ink, hard edges — the one soft thing
+   on the site is the shadow field, because shadows are soft.
+   ================================================================ */
+
+:root {
+  /* The stated palette */
+  --red: #f4333a;
+  --yellow: #fee077;
+  --blue: #265b9d;
+  --green: #357e5d;
+  --pink: #fd45a6;
+
+  /* The wall */
+  --wall: #1d1814;
+  --wall-deep: #14100d;
+  --frame: #f3ecdd; /* off-white frame stock around every image */
+  --ink: #efe7d8;
+  --ink-dim: #a89c8c;
+
+  --font-display: 'Archivo Black', 'Futura', 'Arial Black', 'Century Gothic',
+    sans-serif;
+  --font-body: 'Gill Sans', 'Gill Sans MT', 'Avenir', 'Trebuchet MS', sans-serif;
+  /* The author's wordmark is a high-contrast Didone — used for the menu,
+     drop caps and masthead accents. */
+  --font-wordmark: 'Bodoni Moda', 'Didot', 'Bodoni 72', 'Times New Roman', serif;
+  /* Section headlines run in a heavy condensed face — newspaper-bill / horror
+     -paperback loudness, no polish (PK: the Didone heads read too polished). */
+  --font-head: 'Anton', 'Oswald', 'Arial Narrow', 'Helvetica Neue', sans-serif;
+
+  --gutter: clamp(1.25rem, 4vw, 3.5rem);
+  --frame-w: clamp(4px, 0.6vw, 7px);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--wall);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.55;
+  overflow-x: clip;
+  /* Archivo Black ships one weight — never let the browser fake others */
+  font-synthesis: none;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+p,
+figure,
+blockquote,
+ul,
+ol {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+em {
+  font-style: italic;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 3px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ----------------------------------------------------------------
+   Display type
+   ---------------------------------------------------------------- */
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 0.92;
+  letter-spacing: 0.01em;
+}
+
+/* Section heads — double-printed: the accent pass sits hard behind
+   the ink pass, off-register, like a two-colour print run. */
+.section-head {
+  position: relative;
+  z-index: 0;
+  font-family: var(--font-head);
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 0.94;
+  letter-spacing: 0.012em;
+  font-size: clamp(2.9rem, 7.6vw, 5.7rem);
+  color: var(--ink);
+  width: fit-content;
+}
+
+/* A faint same-tone misregister — a quiet printed emboss, not a colour
+   off-print. PK: the rainbow ghost read too colourful / polished. */
+.section-head::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  transform: translate(0.035em, 0.035em);
+  color: color-mix(in srgb, currentColor 14%, transparent);
+  z-index: -1;
+}
+
+/* ----------------------------------------------------------------
+   The white frame — every image on the wall is a framed object
+   ---------------------------------------------------------------- */
+
+.framed {
+  position: relative;
+  background: var(--frame);
+  padding: var(--frame-w);
+  display: block;
+}
+
+.framed > img,
+.framed > video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Hard-stop pattern fields (op-art tiles, forthcoming card, etc.) */
+.pattern {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ----------------------------------------------------------------
+   The shadow field — something is moving behind the wall.
+   Fixed behind every page; blobs are driven by ShadowField.tsx
+   (autonomous drift + pointer parallax). The accent ember takes the
+   page's colour: red on the wall, the book's ink inside its world.
+   ---------------------------------------------------------------- */
+
+/* WebGL pass — the primary field */
+.shadow-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.shadow-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.shadow-field span {
+  position: absolute;
+  border-radius: 46% 54% 58% 42% / 42% 50% 50% 58%;
+  background: #080504;
+  opacity: 0.65;
+  filter: blur(70px);
+  will-change: transform;
+}
+
+.shadow-field .sf-1 {
+  width: 62vmax;
+  height: 50vmax;
+  top: -12%;
+  left: -14%;
+}
+
+.shadow-field .sf-2 {
+  width: 48vmax;
+  height: 44vmax;
+  top: 30%;
+  right: -16%;
+  opacity: 0.55;
+}
+
+.shadow-field .sf-3 {
+  width: 44vmax;
+  height: 40vmax;
+  bottom: -18%;
+  left: 18%;
+  opacity: 0.6;
+}
+
+.shadow-field .sf-ember {
+  width: 38vmax;
+  height: 34vmax;
+  top: 36%;
+  left: 30%;
+  background: var(--shadow-accent, var(--red));
+  opacity: 0.1;
+  filter: blur(90px);
+}
+
+/* Page content always rides above the field */
+.page {
+  position: relative;
+  z-index: 1;
+}
+
+/* ----------------------------------------------------------------
+   Site chrome
+   ---------------------------------------------------------------- */
+
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem var(--gutter);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--nav-bg, var(--wall));
+  border-bottom: 1px solid color-mix(in srgb, var(--frame) 22%, transparent);
+}
+
+.nav a {
+  text-decoration: none;
+}
+
+.nav__brand {
+  color: var(--red);
+  display: flex;
+  align-items: center;
+}
+
+/* The lockup ships as near-black ink on transparency; the wall is dark,
+   so it runs inverted (ink becomes light). */
+.nav__lockup {
+  height: 30px;
+  width: auto;
+  display: block;
+  filter: invert(1);
+}
+
+@media (max-width: 640px) {
+  .nav__lockup {
+    height: 21px;
+  }
+}
+
+.nav__links {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(1.1rem, 3vw, 2.6rem);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.nav__links::-webkit-scrollbar {
+  display: none;
+}
+
+.nav__links a {
+  flex-shrink: 0;
+  position: relative;
+  font-family: var(--font-wordmark);
+  font-weight: 500;
+  font-size: clamp(0.98rem, 1.25vw, 1.2rem);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.nav__links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 2px;
+  background: var(--nav-accent, var(--red));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.22s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.nav__links a:hover::after,
+.nav__links a:focus-visible::after {
+  transform: scaleX(1);
+}
+
+@media (max-width: 640px) {
+  .nav {
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    gap: 0.6rem;
+  }
+
+  .nav__brand {
+    white-space: nowrap;
+  }
+
+  .nav__links {
+    gap: 0.7rem;
+  }
+
+  .nav__links a {
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+  }
+}
+
+/* ----------------------------------------------------------------
+   Animated footer — contact + the wave.
+   Adapted from a Tailwind/shadcn snippet into this design system:
+   bars take the page accent and undulate like something surfacing.
+   ---------------------------------------------------------------- */
+
+.afoot {
+  border-top: 1px solid color-mix(in srgb, var(--frame) 22%, transparent);
+  margin-top: clamp(2rem, 6vh, 4rem);
+}
+
+.afoot__inner {
+  max-width: 1500px;
+  margin-inline: auto;
+  padding: clamp(2.5rem, 6vh, 4.5rem) var(--gutter) clamp(2rem, 5vh, 3rem);
+}
+
+/* The email — a paper mailing label on the wall, not a headline */
+.afoot__mail {
+  display: grid;
+  gap: 0.3rem;
+  width: fit-content;
+  max-width: 100%;
+  background: var(--frame);
+  color: var(--wall-deep);
+  padding: 1.1rem 1.4rem 1.2rem;
+  text-decoration: none;
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.afoot__mail::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px dashed color-mix(in srgb, var(--wall-deep) 45%, transparent);
+  pointer-events: none;
+}
+
+.afoot__mail:hover,
+.afoot__mail:focus-visible {
+  transform: translate(-3px, -3px);
+  box-shadow: 6px 6px 0 var(--wave-color, var(--red));
+}
+
+.afoot__mail-kicker {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.58rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--wall-deep) 62%, var(--frame));
+}
+
+.afoot__mail-value {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: clamp(0.85rem, 1.5vw, 1.2rem);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.afoot__mail-place {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: color-mix(in srgb, var(--wall-deep) 72%, var(--frame));
+}
+
+.afoot__cols {
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  margin-bottom: clamp(2rem, 5vh, 3rem);
+}
+
+@media (min-width: 860px) {
+  .afoot__cols {
+    grid-template-columns: auto 1fr auto;
+    align-items: start;
+  }
+}
+
+.afoot__links {
+  display: grid;
+  gap: 0.55rem;
+  align-content: start;
+}
+
+.afoot__links a,
+.afoot__links button {
+  font-size: 1rem;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: color-mix(in srgb, var(--ink) 40%, transparent);
+}
+
+.afoot__links a:hover,
+.afoot__links a:focus-visible,
+.afoot__links button:hover,
+.afoot__links button:focus-visible {
+  color: var(--wave-color, var(--red));
+  text-decoration-color: currentColor;
+}
+
+.afoot__links small {
+  color: var(--ink-dim);
+  font-size: 0.85em;
+}
+
+.afoot__legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.64rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.afoot__wave {
+  overflow: hidden;
+  height: 170px;
+  margin-top: clamp(1.5rem, 4vh, 2.5rem);
+}
+
+.afoot__wave .bar {
+  height: var(--bar-h, 2px);
+  margin-top: -2px;
+  background: var(--wave-color, var(--red));
+  will-change: transform;
+}
+
+/* ----------------------------------------------------------------
+   View transitions — you enter each book through its cover.
+   The wall cover and the book-page cover share a transition name,
+   so navigation morphs one into the other while the world's palette
+   crossfades in underneath.
+   ---------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.45s;
+    animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1);
+  }
+
+  ::view-transition-group(*) {
+    animation-duration: 0.55s;
+    animation-timing-function: cubic-bezier(0.22, 0.9, 0.24, 1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ----------------------------------------------------------------
+   Reveal on scroll (gated for reduced motion)
+   ---------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition:
+      opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
