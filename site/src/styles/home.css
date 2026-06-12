@@ -216,6 +216,9 @@
   line-height: 1.55;
   max-width: 54ch;
   color: var(--bk-ink, var(--ink));
+  /* a hair of air so a comma after an italic title (AWWE opens on its own
+     italicised name) doesn't collide into the next word */
+  word-spacing: 0.05em;
 }
 
 .spot__blurb em {
@@ -247,23 +250,10 @@
 
 /* --- Per-book title treatments, echoing each book's own page --- */
 
-/* The Marigold: magenta off-print + gold dashed rule */
+/* The Marigold: magenta off-print (gold dashed rule removed per PK) */
 .spot--stack .spot__title {
   line-height: 0.88;
   text-shadow: 0.04em 0.035em 0 color-mix(in srgb, var(--bk-accent) 80%, transparent);
-}
-
-.spot--stack .spot__title::after {
-  content: '';
-  display: block;
-  width: clamp(110px, 16vw, 240px);
-  height: 5px;
-  margin-top: clamp(0.9rem, 2vh, 1.5rem);
-  background: repeating-linear-gradient(
-    90deg,
-    var(--bk-accent2) 0 14px,
-    transparent 14px 20px
-  );
 }
 
 /* The Handyman Method: fog letters lit from below by something red */
@@ -310,18 +300,19 @@
   );
 }
 
-/* Forthcoming — a striped field stands in for the missing cover */
-.pattern--stripes {
-  background: repeating-linear-gradient(
-    135deg,
-    var(--red) 0 16px,
-    var(--wall-deep) 16px 30px
-  );
+/* Forthcoming — not yet a destination, so it shows no click affordance */
+.spot--forthcoming {
+  cursor: default;
 }
 
-.spot--forthcoming .framed > .pattern {
-  aspect-ratio: 2 / 3;
-  min-height: 280px;
+.spot--forthcoming:hover .spot__media .framed,
+.spot--forthcoming:focus-within .spot__media .framed {
+  transform: none;
+  box-shadow: none;
+}
+
+.spot--forthcoming:hover .spot__rule {
+  width: 32px;
 }
 
 /* ----------------------------------------------------------------

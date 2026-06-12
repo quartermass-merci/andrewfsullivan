@@ -52,18 +52,27 @@ export default function Home() {
               >
                 <div className="spot__media">
                   <span className="framed">
-                    <span className="pattern pattern--stripes" aria-hidden="true" />
+                    <img
+                      src={forthcoming.cover}
+                      alt={`${forthcoming.title} — cover`}
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </span>
                 </div>
                 <div className="spot__text">
                   <p className="spot__kicker">
                     <span className="spot__rule" aria-hidden="true" />
-                    <span>
-                      Forthcoming · {forthcoming.publisher} · {forthcoming.year}
-                    </span>
+                    <span>Coming 2027 · {forthcoming.publisher}</span>
                   </p>
                   <h3 className="spot__title display">{forthcoming.title}</h3>
-                  <p className="spot__blurb">{forthcoming.blurb}</p>
+                  {forthcoming.blurb.map((para) => (
+                    <p
+                      key={para.slice(0, 24)}
+                      className="spot__blurb"
+                      dangerouslySetInnerHTML={{ __html: italicsToHtml(para) }}
+                    />
+                  ))}
                 </div>
               </div>
             </Reveal>

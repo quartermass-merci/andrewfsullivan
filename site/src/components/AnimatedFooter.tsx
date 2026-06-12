@@ -63,49 +63,36 @@ export default function AnimatedFooter() {
   return (
     <footer className="afoot" id="contact" ref={footerRef}>
       <div className="afoot__inner">
-        <div className="afoot__cols">
-          {/* The email as a mailing label pinned to the wall */}
-          <a className="afoot__mail" href={author.email.href}>
-            <span className="afoot__mail-kicker">Email</span>
-            <span className="afoot__mail-value">Click to email</span>
-            <span className="afoot__mail-place">Hamilton, Ontario</span>
-          </a>
+        <img
+          className="afoot__name"
+          src="/images/brand/name-lockup.png"
+          alt="Andrew F. Sullivan"
+          loading="lazy"
+          decoding="async"
+        />
 
-          <ul className="afoot__links" aria-label="Channels">
-            {author.socials.map((s) => (
-              <li key={s.label}>
-                <a href={s.href} target="_blank" rel="noopener noreferrer">
-                  {s.label} <small>{s.handle}</small>
-                </a>
-              </li>
-            ))}
-            <li>
-              <a
-                href={author.agent.href}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Agent{' '}
-                <small>
-                  {author.agent.name}, {author.agent.agency}
-                </small>
+        <ul className="afoot__links" aria-label="Contact and navigation">
+          <li>
+            <a href={author.email.href}>Email</a>
+          </li>
+          {author.socials.map((s) => (
+            <li key={s.label}>
+              <a href={s.href} target="_blank" rel="noopener noreferrer">
+                {s.label} <small>{s.handle}</small>
               </a>
             </li>
-          </ul>
-
-          <ul className="afoot__links" aria-label="Site">
-            <li>{onHome ? <a href="#books">Books</a> : <Link to="/#books">Books</Link>}</li>
-            <li>{onHome ? <a href="#bio">Bio</a> : <Link to="/#bio">Bio</Link>}</li>
-            <li>
-              <button
-                type="button"
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              >
-                Back to top
-              </button>
-            </li>
-          </ul>
-        </div>
+          ))}
+          <li>
+            <a href={author.agent.href} target="_blank" rel="noopener noreferrer">
+              Agent{' '}
+              <small>
+                {author.agent.name}, {author.agent.agency}
+              </small>
+            </a>
+          </li>
+          <li>{onHome ? <a href="#books">Books</a> : <Link to="/#books">Books</Link>}</li>
+          <li>{onHome ? <a href="#bio">Bio</a> : <Link to="/#bio">Bio</Link>}</li>
+        </ul>
 
         <div className="afoot__legal">
           <p>© {author.copyright}</p>

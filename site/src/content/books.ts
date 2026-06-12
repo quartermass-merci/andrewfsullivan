@@ -567,7 +567,13 @@ export const forthcoming = {
   title: 'Earth Filled with Blood',
   publisher: 'Gallery Books (Simon & Schuster)',
   year: 'Spring 2027',
-  blurb: `Pitched as “Nosferatu Meets Succession,” and drawing on Irish folklore, about territorial, supernatural beings desperate to thrive in the modern world and the ramshackle attempt to halt their domination. Coming 2027!`,
+  // Placeholder cover supplied by PK — swap for the final jacket when it lands.
+  cover: '/images/books/earth-filled-with-blood.jpg',
+  // Two-paragraph writeup supplied by PK.
+  blurb: [
+    `Coming 2027 is Andrew F. Sullivan's highly anticipated follow up to 2023's smash *The Marigold*.`,
+    `*Earth Filled with Blood* is billed as “Nosferatu Meets Succession.” Drawing on Irish folklore, this book follows a group of territorial, supernatural beings desperate to thrive in the modern world, and the ramshackle attempt to halt their domination.`,
+  ],
 };
 
 export function getBook(slug: string): Book | undefined {

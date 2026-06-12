@@ -11,6 +11,9 @@ dist/
 # in the repo (the web copies the site uses live in site/public/)
 Assets from the Current Website/
 
+# favicon source images — the generated favicons live in site/public/
+Favicon/
+
 # OS / editor cruft
 .DS_Store
 **/.DS_Store

@@ -79,17 +79,78 @@
   white-space: pre-line;
 }
 
+/* Imprint line — a billed credit, not a dead row. The kind leads in accent off
+   a hard tick; the publication facts follow, punctuated by small accent
+   lozenges, the figures set in lining tabular numerals and brought up toward
+   ink so the year and ISBN actually register. */
 .book__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem 1.75rem;
+  align-items: baseline;
+  gap: 0.5rem 0;
   margin-top: clamp(1.25rem, 3vh, 2rem);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.7rem;
-  letter-spacing: 0.24em;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--bk-muted);
+}
+
+.book__meta-kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--bk-accent);
+  letter-spacing: 0.26em;
+}
+
+.book__meta-kind::before {
+  content: '';
+  width: 1.5rem;
+  height: 2px;
+  background: var(--bk-accent);
+}
+
+.book--scrawl .book__meta-kind {
+  color: var(--bk-accent2);
+}
+
+.book--scrawl .book__meta-kind::before {
+  background: var(--bk-accent2);
+}
+
+.book__meta-item {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+/* a small accent lozenge between every fact */
+.book__meta-item::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  margin: 0 0.95em;
+  align-self: center;
+  background: var(--bk-accent);
+  transform: rotate(45deg);
+  opacity: 0.85;
+}
+
+.book--scrawl .book__meta-item::before {
+  background: var(--bk-accent2);
+}
+
+.book__meta-num {
+  font-variant-numeric: tabular-nums lining;
+  letter-spacing: 0.12em;
+  color: color-mix(in srgb, var(--bk-ink) 78%, var(--bk-muted));
+}
+
+/* the ISBN number is a child of its item (the year is the item itself) — give
+   only the nested figure a gap, since inline-flex eats the literal space */
+.book__meta-item > .book__meta-num {
+  margin-left: 0.45em;
 }
 
 .book__meta strong {
@@ -104,19 +165,6 @@
   line-height: 0.88;
   text-shadow:
     0.04em 0.035em 0 color-mix(in srgb, var(--bk-accent) 75%, transparent);
-}
-
-.book--stack .book__title::after {
-  content: '';
-  display: block;
-  width: clamp(120px, 22vw, 320px);
-  height: 5px;
-  margin-top: clamp(1rem, 2.5vh, 1.75rem);
-  background: repeating-linear-gradient(
-    90deg,
-    var(--bk-accent2) 0 14px,
-    transparent 14px 20px
-  );
 }
 
 /* The Handyman Method: fog letters lit from below by something red */
@@ -210,6 +258,9 @@
   font-size: clamp(1.08rem, 1.5vw, 1.3rem);
   line-height: 1.62;
   max-width: 62ch;
+  /* opens the spaces a hair so a comma after an italic title (AWWE opens
+     "*All We Want is Everything*, Andrew…") doesn't read as one word */
+  word-spacing: 0.06em;
 }
 
 .book__synopsis p:first-child {
@@ -224,6 +275,7 @@
 .book__synopsis p:first-child::first-letter {
   font-family: var(--font-wordmark);
   font-weight: 700;
+  font-style: normal; /* upright even when the first word is an italic title */
   color: var(--bk-accent);
   float: left;
   font-size: 3.7em;
@@ -257,79 +309,155 @@
 }
 
 .book--banner .book__synopsis p:first-child::first-letter {
-  color: var(--bk-bg);
-  background: var(--bk-accent);
-  padding: 0.04em 0.12em 0;
+  color: var(--bk-accent);
 }
 
 .book__synopsis em {
   color: var(--bk-accent);
 }
 
-/* Honours — set as a running back-cover credit line, not chips */
-.book__honors {
-  margin-top: clamp(1.75rem, 4vh, 2.5rem);
+/* A small understated kicker shared by the honours + order blocks — gives each
+   stack a head so it stops reading as loose floating text. */
+.book__kicker {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.74rem;
-  letter-spacing: 0.13em;
+  font-size: 0.64rem;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
-  line-height: 2;
-  color: var(--bk-accent);
-  max-width: 58ch;
+  color: var(--bk-muted);
+  margin-bottom: 0.95rem;
 }
 
-.book--scrawl .book__honors {
+/* Honours — an aligned ledger of recognition. Each prize on its own line, hung
+   off a short accent tick with a clean hanging indent, so a long, mixed-length
+   list reads as a tidy column instead of a smeared run-on. */
+.book__honors-block {
+  margin-top: clamp(1.75rem, 4vh, 2.5rem);
+}
+
+.book__honors {
+  display: grid;
+  gap: 0.6rem;
+  max-width: 56ch;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The title carries the colour and a colon; the prizes themselves read white,
+   with no marker in front of them. */
+.book__honors-kicker {
+  color: var(--bk-accent);
+}
+
+.book__honors-kicker::after {
+  content: ':';
+  margin-left: -0.16em; /* hug the word against the label tracking */
+}
+
+.book--scrawl .book__honors-kicker {
   color: var(--bk-accent2);
 }
 
-/* Ordering — editorial link runs, the way the live site lists retailers */
+.book__honor {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.76rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1.5;
+  color: var(--bk-ink);
+}
+
+/* Ordering — a purchase ledger. A bold accent top-edge (not a hairline) ties it
+   to the cover's accent shadow; the format labels sit in their own column so
+   the retailers line up; each link carries an accent marker that wipes in on
+   hover — the sauce. */
 .book__order {
   margin-top: clamp(2rem, 5vh, 3rem);
   display: grid;
-  gap: 1.1rem;
-  border-top: 1px solid color-mix(in srgb, var(--bk-ink) 18%, transparent);
+  gap: clamp(0.8rem, 2vh, 1.1rem);
+  border-top: 2px solid var(--bk-accent);
   padding-top: clamp(1.25rem, 3vh, 1.75rem);
-  max-width: 62ch;
+  max-width: 64ch;
+}
+
+.book--scrawl .book__order {
+  border-top-color: var(--bk-accent2);
+}
+
+.book__order-kicker {
+  color: var(--bk-accent);
+  margin-bottom: 0.2rem;
+}
+
+.book--scrawl .book__order-kicker {
+  color: var(--bk-accent2);
 }
 
 .book__order-line {
-  font-size: 1.02rem;
-  line-height: 1.9;
+  display: grid;
+  grid-template-columns: minmax(6.5rem, max-content) 1fr;
+  gap: 0.3rem 1.5rem;
+  align-items: baseline;
+  font-size: 1.04rem;
+  line-height: 1.75;
+}
+
+/* single-group books drop the label column and run the links full width */
+.book__order-line--full {
+  grid-template-columns: 1fr;
+}
+
+@media (max-width: 560px) {
+  .book__order-line {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
 }
 
 .book__order-label {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.68rem;
-  letter-spacing: 0.22em;
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--bk-muted);
-  margin-right: 0.9rem;
+  color: var(--bk-accent);
+  align-self: center;
+  margin: 0;
+}
+
+.book--scrawl .book__order-label {
+  color: var(--bk-accent2);
 }
 
 .book__order-line a {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.22em;
-  text-decoration-color: color-mix(in srgb, var(--bk-ink) 45%, transparent);
+  font-weight: 600;
+  color: var(--bk-ink);
   white-space: nowrap;
+  border-bottom: 1px solid color-mix(in srgb, var(--bk-ink) 28%, transparent);
+  background-image: linear-gradient(var(--bk-accent), var(--bk-accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 0.16em;
+  transition:
+    background-size 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.2s ease;
 }
 
 .book__order-line a:hover,
 .book__order-line a:focus-visible {
-  color: var(--bk-accent);
-  text-decoration-color: var(--bk-accent);
+  border-bottom-color: transparent;
+  background-size: 100% 0.16em;
 }
 
-.book--scrawl .book__order-line a:hover,
-.book--scrawl .book__order-line a:focus-visible {
-  color: var(--bk-accent2);
-  text-decoration-color: var(--bk-accent2);
+.book--scrawl .book__order-line a {
+  background-image: linear-gradient(var(--bk-accent2), var(--bk-accent2));
 }
 
 .book__order-sep {
   color: var(--bk-muted);
+  margin: 0 0.15em;
 }
 
 /* ----------------------------------------------------------------
@@ -342,21 +470,21 @@
    into the surrounding ink so it reads as "something alive underneath" rather
    than a video. PK: narrow it, filter it, keep the motion subtle. */
 .book__band {
-  height: clamp(96px, 16vh, 150px);
+  height: clamp(110px, 18vh, 180px);
   background: var(--bk-bg);
   overflow: hidden;
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent,
-    #000 32%,
-    #000 68%,
+    #000 14%,
+    #000 86%,
     transparent
   );
   mask-image: linear-gradient(
     to bottom,
     transparent,
-    #000 32%,
-    #000 68%,
+    #000 14%,
+    #000 86%,
     transparent
   );
 }
@@ -367,12 +495,12 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.5;
-  filter: blur(2px) saturate(0.75) contrast(1.05);
+  opacity: 0.58;
+  filter: blur(1.6px) saturate(0.72) contrast(1.08);
   mix-blend-mode: screen;
 }
 
-/* The static fallback drifts slowly; the video carries its own half-speed loop */
+/* The static fallback drifts slowly; the video carries its own slow loop */
 @media (prefers-reduced-motion: no-preference) {
   .book__band img {
     animation: band-breathe 20s ease-in-out infinite alternate;
@@ -383,6 +511,9 @@
     to { transform: scale(1.09); }
   }
 }
+
+/* The band's scroll-reactive aperture (open at centre → slit as you pass) is
+   driven from Book.tsx (clip-path via rAF) so it works in every browser. */
 
 /* ----------------------------------------------------------------
    Press — a wall of type, not a card grid
@@ -400,16 +531,41 @@
    coloured off-print / under-glow too colourful and polished for the vibe.
    Colour lives in the cover bands, the drop caps and the title treatments. */
 
+/* The lead review does heavier lifting than the wall quotes: a true pull quote,
+   set larger and tighter, hung off an oversized accent quotation mark so it
+   reads as the page's loudest piece of testimony rather than one more clipping. */
 .book__press-feature {
+  position: relative;
   font-family: var(--font-body);
-  font-size: clamp(1.5rem, 3.2vw, 2.6rem);
-  line-height: 1.3;
-  max-width: 26ch;
+  font-weight: 600;
+  font-size: clamp(1.7rem, 4vw, 3.3rem);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  max-width: 20ch;
   margin-bottom: clamp(2.5rem, 6vh, 4rem);
+  padding-top: clamp(2.4rem, 6vw, 4rem);
 }
 
+.book__press-feature::before {
+  content: '\201C';
+  position: absolute;
+  top: clamp(-0.6rem, -1vw, -1.2rem);
+  left: -0.06em;
+  font-family: var(--font-wordmark);
+  font-weight: 700;
+  font-size: clamp(4.5rem, 11vw, 9rem);
+  line-height: 1;
+  color: var(--bk-accent);
+  pointer-events: none;
+}
+
+.book--scrawl .book__press-feature::before {
+  color: var(--bk-accent2);
+}
+
+/* the <q> carries the text only — the oversized mark above is the quotation */
 .book__press-feature q {
-  quotes: '\201C' '\201D';
+  quotes: none;
 }
 
 .book__press-feature em {
@@ -735,34 +891,146 @@
    Next-book handoff
    ---------------------------------------------------------------- */
 
+/* Propulsive hand-off: one taut row — a kicker with a rule that extends, the
+   next title in its own world, and a big accent arrow that idles forward and
+   lunges on hover. Shorter than the old stacked block, so it pulls you on
+   instead of just sitting there. */
 .book__next {
   border-top: 1px solid color-mix(in srgb, var(--bk-ink) 18%, transparent);
-  padding-block: clamp(2.5rem, 6vh, 4rem);
+  padding-block: clamp(1.5rem, 3.5vh, 2.5rem);
 }
 
 .book__next a {
   text-decoration: none;
-  display: inline-grid;
-  gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem clamp(1rem, 2.5vw, 1.9rem);
 }
 
 .book__next-label {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--bk-muted);
 }
 
+.book__next-label::after {
+  content: '';
+  width: clamp(1.4rem, 4vw, 3rem);
+  height: 2px;
+  margin-left: 0.85rem;
+  background: color-mix(in srgb, var(--bk-ink) 30%, transparent);
+  transition:
+    width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.2s ease;
+}
+
+.book__next a:hover .book__next-label::after,
+.book__next a:focus-visible .book__next-label::after {
+  width: clamp(2.2rem, 6vw, 4.5rem);
+  background: var(--bk-accent);
+}
+
 .book__next-title {
-  font-size: clamp(1.8rem, 5vw, 3.4rem);
+  font-size: clamp(1.6rem, 4.4vw, 3rem);
+  line-height: 1;
   color: var(--bk-ink);
   transition: color 0.2s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.book__next-arrow {
+  font-family: var(--font-body);
+  font-size: clamp(1.7rem, 4vw, 2.8rem);
+  line-height: 1;
+  color: var(--bk-accent);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .book__next a:hover .book__next-title,
 .book__next a:focus-visible .book__next-title {
   color: var(--bk-accent);
+  transform: translateX(6px);
+}
+
+.book__next a:hover .book__next-arrow,
+.book__next a:focus-visible .book__next-arrow {
+  animation: none;
+  transform: translateX(14px);
+}
+
+/* an idle forward nudge invites the click; gated to motion-safe */
+@media (prefers-reduced-motion: no-preference) {
+  .book__next-arrow {
+    animation: next-nudge 2.2s ease-in-out infinite;
+  }
+
+  @keyframes next-nudge {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(5px); }
+  }
+}
+
+/* The handoff wears the NEXT book's world. Scoped to .book__next so it beats
+   the current page's title treatment (the nav carries the next book's vars +
+   .book--<style> class). */
+.book__next.book--stack .book__next-title {
+  text-shadow: 0.035em 0.03em 0 color-mix(in srgb, var(--bk-accent) 75%, transparent);
+}
+
+.book__next.book--glow .book__next-title {
+  color: var(--bk-accent2);
+  letter-spacing: 0.08em;
+  text-shadow:
+    0 0 16px color-mix(in srgb, var(--bk-accent) 55%, transparent),
+    0 8px 28px color-mix(in srgb, var(--bk-accent) 35%, transparent);
+}
+
+.book__next.book--glow a:hover .book__next-title,
+.book__next.book--glow a:focus-visible .book__next-title {
+  color: var(--bk-accent2);
+}
+
+.book__next.book--scrawl .book__next-title {
+  letter-spacing: 0.04em;
+}
+
+.book__next.book--scrawl .book__next-title .ch {
+  display: inline-block;
+}
+
+.book__next.book--scrawl .book__next-title .ch:nth-child(odd) {
+  transform: rotate(-2.4deg) translateY(0.02em);
+}
+
+.book__next.book--scrawl .book__next-title .ch:nth-child(even) {
+  transform: rotate(1.8deg) translateY(-0.025em);
+}
+
+.book__next.book--banner .book__next-title {
+  display: inline-block;
+  background: var(--bk-accent);
+  color: var(--bk-bg);
+  padding: 0.22em 0.9em;
+  font-size: clamp(1.4rem, 3.6vw, 2.6rem);
+  clip-path: polygon(
+    0.8em 0%,
+    calc(100% - 0.8em) 0%,
+    100% 50%,
+    calc(100% - 0.8em) 100%,
+    0.8em 100%,
+    0% 50%
+  );
+}
+
+/* On banner the title box already carries the colour — keep it put on hover */
+.book__next.book--banner a:hover .book__next-title,
+.book__next.book--banner a:focus-visible .book__next-title {
+  color: var(--bk-bg);
   transform: translateX(8px);
 }

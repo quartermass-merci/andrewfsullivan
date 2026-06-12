@@ -122,10 +122,43 @@ export default function Book() {
     if (book) document.title = `${book.title} — Andrew F. Sullivan`;
   }, [book]);
 
-  // The banner loops at half speed — a slow, breathing creep.
+  // The banner loops slow — a breathing creep (0.375× = 25% slower again).
   useEffect(() => {
-    if (bandRef.current) bandRef.current.playbackRate = 0.5;
+    if (bandRef.current) bandRef.current.playbackRate = 0.375;
   }, [slug]);
+
+  // The band reacts to scroll: an aperture that opens as it nears the centre of
+  // the viewport and narrows to a slit as you scroll past it. JS-driven (via
+  // clip-path, no reflow) so it works in every browser, not only ones with
+  // view-timelines.
+  useEffect(() => {
+    if (reduceMotion) return;
+    const v = bandRef.current;
+    if (!v) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const r = v.getBoundingClientRect();
+      const vh = window.innerHeight || 1;
+      const dist = Math.min(1, Math.abs(r.top + r.height / 2 - vh / 2) / (vh / 2));
+      // Open only near dead centre, then narrows fast to a slit — tracks the
+      // scroll closely, so it visibly closes in real time as you pass.
+      const t = Math.min(1, Math.max(0, dist - 0.05) / 0.6);
+      v.style.clipPath = `inset(${(t * 48).toFixed(2)}% 0)`;
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+      if (v) v.style.clipPath = '';
+    };
+  }, [slug, reduceMotion]);
 
   // Reset the viewer when navigating between books.
   useEffect(() => {
@@ -196,15 +229,21 @@ export default function Book() {
             </h1>
 
             <p className="book__meta">
-              <span>{book.kind}</span>
+              <span className="book__meta-kind">{book.kind}</span>
               {book.coAuthor && (
-                <span>
+                <span className="book__meta-item">
                   with <strong>{book.coAuthor}</strong>
                 </span>
               )}
-              <span>{book.publisher}</span>
-              {book.year && <span>{book.year}</span>}
-              {book.isbn && <span>ISBN {book.isbn}</span>}
+              <span className="book__meta-item">{book.publisher}</span>
+              {book.year && (
+                <span className="book__meta-item book__meta-num">{book.year}</span>
+              )}
+              {book.isbn && (
+                <span className="book__meta-item">
+                  ISBN <span className="book__meta-num">{book.isbn}</span>
+                </span>
+              )}
             </p>
           </header>
 
@@ -228,31 +267,50 @@ export default function Book() {
               </Reveal>
 
               {book.awards.length > 0 && (
-                <Reveal as="section" delay={140}>
-                  <h2 className="sr-only">Honours</h2>
-                  <p className="book__honors">{book.awards.join('  ·  ')}</p>
+                <Reveal as="section" delay={140} className="book__honors-block">
+                  <h2 className="book__kicker book__honors-kicker">Honours</h2>
+                  <ul className="book__honors">
+                    {book.awards.map((a) => (
+                      <li className="book__honor" key={a}>
+                        <Rich text={a} />
+                      </li>
+                    ))}
+                  </ul>
                 </Reveal>
               )}
 
               <Reveal as="section" delay={180} className="book__order">
-                <h2 className="sr-only">Order</h2>
-                {book.buyGroups.map((g) => (
-                  <p className="book__order-line" key={g.label}>
-                    <span className="book__order-label">{g.label}</span>
-                    {g.links.map((l, i) => (
-                      <span key={l.label}>
-                        <a href={l.href} target="_blank" rel="noopener noreferrer">
-                          {l.label}
-                        </a>
-                        {i < g.links.length - 1 && (
-                          <span className="book__order-sep" aria-hidden="true">
-                            {' / '}
+                <h2 className="book__kicker book__order-kicker">Order</h2>
+                {book.buyGroups.map((g) => {
+                  // A single, undifferentiated list needs no sub-label — the
+                  // "Order" kicker covers it. Multiple groups carry meaningful
+                  // labels (Print / Audiobook, Canadian / American retailers).
+                  const showLabel = book.buyGroups.length > 1;
+                  return (
+                    <p
+                      className={`book__order-line${showLabel ? '' : ' book__order-line--full'}`}
+                      key={g.label}
+                    >
+                      {showLabel && (
+                        <span className="book__order-label">{g.label}</span>
+                      )}
+                      <span className="book__order-links">
+                        {g.links.map((l, i) => (
+                          <span key={l.label}>
+                            <a href={l.href} target="_blank" rel="noopener noreferrer">
+                              {l.label}
+                            </a>
+                            {i < g.links.length - 1 && (
+                              <span className="book__order-sep" aria-hidden="true">
+                                {' / '}
+                              </span>
+                            )}
                           </span>
-                        )}
+                        ))}
                       </span>
-                    ))}
-                  </p>
-                ))}
+                    </p>
+                  );
+                })}
               </Reveal>
             </div>
           </div>
@@ -343,12 +401,7 @@ export default function Book() {
 
           {/* The Marigold's commissioned artwork — click to zoom */}
           {book.gallery && (
-            <section className="book__art" aria-labelledby="art-title">
-              <Reveal className="book__art-head">
-                <h2 className="section-head" data-text="Artwork" id="art-title">
-                  Artwork
-                </h2>
-              </Reveal>
+            <section className="book__art" aria-label="Artwork">
               <div className="book__art-strip">
                 {book.gallery.map((g, i) => (
                   <Reveal as="figure" key={g.artist} delay={i * 60}>
@@ -378,10 +431,33 @@ export default function Book() {
             </section>
           )}
 
-          <nav className="book__next" aria-label="Next book">
+          <nav
+            className={`book__next book--${next.theme.titleStyle}`}
+            aria-label="Next book"
+            style={
+              {
+                '--bk-accent': next.theme.accent,
+                '--bk-accent2': next.theme.accent2,
+                '--bk-ink': next.theme.ink,
+                '--bk-bg': next.theme.bg,
+                '--bk-muted': next.theme.muted,
+              } as CSSProperties
+            }
+          >
             <Link to={`/books/${next.slug}`} viewTransition>
-              <span className="book__next-label">Next</span>
-              <span className="book__next-title display">{next.title}</span>
+              <span className="book__next-label">Next book</span>
+              <span className="book__next-title display">
+                {next.theme.titleStyle === 'scrawl'
+                  ? next.title.split('').map((ch, i) => (
+                      <span className="ch" key={i}>
+                        {ch}
+                      </span>
+                    ))
+                  : next.title}
+              </span>
+              <span className="book__next-arrow" aria-hidden="true">
+                →
+              </span>
             </Link>
           </nav>
         </div>
