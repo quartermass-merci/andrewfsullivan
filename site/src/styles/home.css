@@ -315,6 +315,16 @@
   width: 32px;
 }
 
+/* Book facts under the jacket copy, set like the kicker */
+.spot__meta {
+  margin-top: clamp(1.2rem, 2.5vh, 1.6rem);
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
 /* The pre-order link is the forthcoming spot's one real destination */
 .spot__preorder {
   cursor: pointer;

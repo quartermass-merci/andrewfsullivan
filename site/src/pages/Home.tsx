@@ -63,7 +63,9 @@ export default function Home() {
                 <div className="spot__text">
                   <p className="spot__kicker">
                     <span className="spot__rule" aria-hidden="true" />
-                    <span>Coming 2027 · {forthcoming.publisher}</span>
+                    <span>
+                      {forthcoming.pubDate} · {forthcoming.publisher}
+                    </span>
                   </p>
                   <h3 className="spot__title display">{forthcoming.title}</h3>
                   {forthcoming.blurb.map((para) => (
@@ -73,6 +75,9 @@ export default function Home() {
                       dangerouslySetInnerHTML={{ __html: italicsToHtml(para) }}
                     />
                   ))}
+                  <p className="spot__meta">
+                    {forthcoming.pages} pages · ISBN {forthcoming.isbn}
+                  </p>
                   <a
                     className="spot__enter spot__preorder"
                     href={forthcoming.preorder}

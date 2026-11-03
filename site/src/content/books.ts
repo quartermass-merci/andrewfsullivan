@@ -567,6 +567,9 @@ export const forthcoming = {
   title: 'Earth Filled with Blood',
   publisher: 'Gallery Books (Simon & Schuster)',
   year: 'Spring 2027',
+  pubDate: 'June 15, 2027',
+  pages: 368,
+  isbn: '9781668242254',
   cover: '/images/books/earth-filled-with-blood.jpg',
   preorder:
     'https://www.simonandschuster.com/books/Earth-Filled-with-Blood/Andrew-F-Sullivan/9781668242254',
