@@ -38,14 +38,8 @@ export default function Home() {
                   section label — the spotlights carry themselves ----- */}
         <section className="wall" id="books" aria-label="Books">
           <div className="spot-list">
-            {books.map((book, i) => (
-              <Reveal key={book.slug} delay={i * 80}>
-                <BookSpotlight book={book} index={i} />
-              </Reveal>
-            ))}
-
             {/* Forthcoming — final jacket, publisher copy, pre-order link */}
-            <Reveal delay={books.length * 80}>
+            <Reveal>
               <div
                 className="spot spot--forthcoming"
                 aria-label={`${forthcoming.title} — forthcoming`}
@@ -55,7 +49,7 @@ export default function Home() {
                     <img
                       src={forthcoming.cover}
                       alt={`${forthcoming.title} — cover`}
-                      loading="lazy"
+                      loading="eager"
                       decoding="async"
                     />
                   </span>
@@ -92,6 +86,13 @@ export default function Home() {
                 </div>
               </div>
             </Reveal>
+
+            {books.map((book, i) => (
+              <Reveal key={book.slug} delay={(i + 1) * 80}>
+                <BookSpotlight book={book} index={i + 1} />
+              </Reveal>
+            ))}
+
           </div>
         </section>
 
