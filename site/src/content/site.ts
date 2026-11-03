@@ -8,7 +8,7 @@ export const author = {
   // homepage bio. Rendered as one paragraph per array entry.
   bio: [
     `Andrew F. Sullivan is the author of *The Marigold*, a finalist for the Aurora Awards, the Locus Awards, and the Hamilton Literary Awards, and named a Best Book of the Year by *Esquire*, *The Verge*, *Book Riot* and the *Winnipeg Free Press*. He cowrote *The Handyman Method* with Nick Cutter, a novel about home improvement gone wrong. Sullivan is also the author of the novel *WASTE*, a *Globe & Mail* Best Book of the Year, and the short story collection *All We Want is Everything*, a *Globe & Mail* Best Book of the Year and finalist for the ReLit Award. He lives in Hamilton, Ontario.`,
-    `Sullivan’s next novel *Earth Filled with Blood* is forthcoming from Gallery Books (a division of Simon & Schuster) in Spring 2027.`,
+    `Sullivan’s next novel *Earth Filled with Blood* is forthcoming from Gallery Books (a division of Simon & Schuster) on June 15, 2027.`,
     `Sullivan is represented by Ron Eckel at CookeMcDermid.`,
   ],
   headshot: {
