@@ -391,3 +391,27 @@
   color: var(--yellow);
   font-style: italic;
 }
+
+/* Bio links: a thin rule under the linked book or award, cleared on hover */
+.bio__text a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--red) 70%, transparent);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.bio__text a:hover,
+.bio__text a:focus-visible {
+  color: var(--red);
+  border-bottom-color: transparent;
+}
+
+.bio__text a:hover em,
+.bio__text a:focus-visible em {
+  color: var(--red);
+}
+
+.bio__text a:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+}

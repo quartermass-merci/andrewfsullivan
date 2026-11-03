@@ -4,11 +4,10 @@
 
 export const author = {
   name: 'Andrew F. Sullivan',
-  // Bio copy supplied verbatim by PK (2026-06-11); supersedes the scraped
-  // homepage bio. Rendered as one paragraph per array entry.
+  // Bio copy supplied verbatim by PK (2026-11-03). [text](url) renders as a
+  // link; external links open in a new tab. One paragraph per array entry.
   bio: [
-    `Andrew F. Sullivan is the author of *The Marigold*, a finalist for the Aurora Awards, the Locus Awards, and the Hamilton Literary Awards, and named a Best Book of the Year by *Esquire*, *The Verge*, *Book Riot* and the *Winnipeg Free Press*. He cowrote *The Handyman Method* with Nick Cutter, a novel about home improvement gone wrong. Sullivan is also the author of the novel *WASTE*, a *Globe & Mail* Best Book of the Year, and the short story collection *All We Want is Everything*, a *Globe & Mail* Best Book of the Year and finalist for the ReLit Award. He lives in Hamilton, Ontario.`,
-    `Sullivan’s next novel *Earth Filled with Blood* is forthcoming from Gallery Books (a division of Simon & Schuster) on June 15, 2027.`,
+    `Andrew F. Sullivan is the author of the novel [*Earth Filled with Blood*](https://www.simonandschuster.com/books/Earth-Filled-with-Blood/Andrew-F-Sullivan/9781668242254). His previous novel, [*The Marigold*](/books/the-marigold), was a finalist for the [Aurora Awards](https://www.csffa.ca/awards-information/), the [Locus Awards](https://locusmag.com/2024/05/2024-locus-awards-top-ten-finalists), and the [Hamilton Literary Awards](https://hamiltonartscouncil.ca/literaryawards). His other books include the novel [*WASTE*](/books/waste), the short story collection [*All We Want Is Everything*](/books/all-we-want-is-everything)—both named *Globe & Mail* (Toronto) Best Books of the Year—and [*The Handyman Method*](/books/the-handyman-method), a novel cowritten with *USA TODAY* bestselling author Nick Cutter. Sullivan lives in Hamilton, Ontario, Canada.`,
     `Sullivan is represented by Ron Eckel at CookeMcDermid.`,
   ],
   headshot: {
@@ -44,5 +43,10 @@ export function italicsToHtml(input: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, text: string, href: string) =>
+      href.startsWith('/')
+        ? `<a href="${href}">${text}</a>`
+        : `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`,
+    )
     .replace(/\*([^*]+)\*/g, '<em>$1</em>');
 }
