@@ -562,17 +562,21 @@ export const books: Book[] = [
   },
 ];
 
-// Forthcoming — the only facts on the current site are title, publisher, season.
+// Forthcoming — final jacket + publisher copy supplied by PK (Nov 2026).
 export const forthcoming = {
   title: 'Earth Filled with Blood',
   publisher: 'Gallery Books (Simon & Schuster)',
   year: 'Spring 2027',
-  // Placeholder cover supplied by PK — swap for the final jacket when it lands.
   cover: '/images/books/earth-filled-with-blood.jpg',
-  // Two-paragraph writeup supplied by PK.
+  preorder:
+    'https://www.simonandschuster.com/books/Earth-Filled-with-Blood/Andrew-F-Sullivan/9781668242254',
+  // Publisher jacket copy, verbatim as supplied by PK.
   blurb: [
-    `Coming 2027 is Andrew F. Sullivan's highly anticipated follow up to 2023's smash *The Marigold*.`,
-    `*Earth Filled with Blood* is billed as “Nosferatu Meets Succession.” Drawing on Irish folklore, this book follows a group of territorial, supernatural beings desperate to thrive in the modern world, and the ramshackle attempt to halt their domination.`,
+    `*Succession* meets *Nosferatu* in this contemporary gothic bloodbath steeped in Irish folklore from the acclaimed author of *The Marigold* and *The Handyman Method* (with Nick Cutter), about ancient supernatural dynasties fighting to dominate the modern world—and the ramshackle hunters determined to stop them.`,
+    `Garrett Hold was born into a dying dynasty. Buddy Over There has devoted his life to killing families like Garrett’s.`,
+    `Across Canada, ancient blood-drinking creatures have survived for generations by hiding in plain sight. Some control forgotten towns and lonely stretches of highway. Others, like the immensely powerful Mallodun family, have traded old kingdoms for corporate empires, accumulating wealth and influence while quietly feeding on the people around them. When Garrett unexpectedly falls for Fiona Mallodun, he sees an escape from the Holds’s crumbling legacy—and an invitation into a world more powerful and dangerous than anything he has ever known.`,
+    `Buddy, meanwhile, travels those same highways, leaving the unholy and inhuman dead and burning behind him. But when a young survivor joins his crusade, their hunt exposes something far larger than another nest of monsters: the old bloodlines appear to be consolidating, and the Malloduns are at the very center of it.`,
+    `As Garrett is pulled deeper into a domineering family’s terrifying ambitions and Buddy closes in from the outside, their stories race toward a collision that could forever change the balance between predator and prey.`,
   ],
 };
 

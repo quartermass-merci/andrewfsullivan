@@ -315,6 +315,24 @@
   width: 32px;
 }
 
+/* The pre-order link is the forthcoming spot's one real destination */
+.spot__preorder {
+  cursor: pointer;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 0.35em;
+}
+
+.spot__preorder:hover .spot__enter-arrow,
+.spot__preorder:focus-visible .spot__enter-arrow {
+  transform: translateX(9px);
+}
+
+.spot__preorder:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 4px;
+}
+
 /* ----------------------------------------------------------------
    Bio
    ---------------------------------------------------------------- */

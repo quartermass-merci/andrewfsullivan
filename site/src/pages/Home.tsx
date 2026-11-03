@@ -44,7 +44,7 @@ export default function Home() {
               </Reveal>
             ))}
 
-            {/* Forthcoming — no cover yet; a striped field holds the slot */}
+            {/* Forthcoming — final jacket, publisher copy, pre-order link */}
             <Reveal delay={books.length * 80}>
               <div
                 className="spot spot--forthcoming"
@@ -73,6 +73,17 @@ export default function Home() {
                       dangerouslySetInnerHTML={{ __html: italicsToHtml(para) }}
                     />
                   ))}
+                  <a
+                    className="spot__enter spot__preorder"
+                    href={forthcoming.preorder}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className="spot__enter-label">Pre-order</span>
+                    <span className="spot__enter-arrow" aria-hidden="true">
+                      →
+                    </span>
+                  </a>
                 </div>
               </div>
             </Reveal>
